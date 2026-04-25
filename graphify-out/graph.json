@@ -1,0 +1,245 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "type": "file",
+      "label": "\ud83d\udc09 DRAGONCLAW \u2014 AI Co-Founder Memory System",
+      "id": "README.md"
+    },
+    {
+      "type": "concept",
+      "label": "What Is This?",
+      "id": "What Is This?"
+    },
+    {
+      "type": "concept",
+      "label": "Folder Structure",
+      "id": "Folder Structure"
+    },
+    {
+      "type": "concept",
+      "label": "How It Works",
+      "id": "How It Works"
+    },
+    {
+      "type": "concept",
+      "label": "Why?",
+      "id": "Why?"
+    },
+    {
+      "type": "file",
+      "label": "IAM Clothing Brand \u2014 Project Spec",
+      "id": "SPEC.md"
+    },
+    {
+      "type": "concept",
+      "label": "What Is It?",
+      "id": "What Is It?"
+    },
+    {
+      "type": "concept",
+      "label": "Brand Identity",
+      "id": "Brand Identity"
+    },
+    {
+      "type": "concept",
+      "label": "Pages",
+      "id": "Pages"
+    },
+    {
+      "type": "concept",
+      "label": "Products",
+      "id": "Products"
+    },
+    {
+      "type": "concept",
+      "label": "Architecture",
+      "id": "Architecture"
+    },
+    {
+      "type": "concept",
+      "label": "Admin Credentials",
+      "id": "Admin Credentials"
+    },
+    {
+      "type": "concept",
+      "label": "Workflow",
+      "id": "Workflow"
+    },
+    {
+      "type": "concept",
+      "label": "TODO",
+      "id": "TODO"
+    },
+    {
+      "type": "file",
+      "label": "Memory \u2014 2026-04-25",
+      "id": "2026-04-25.md"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\udc09 Dragonclaw Vault \u2014 Created Today!",
+      "id": "\ud83d\udc09 Dragonclaw Vault \u2014 Created Today!"
+    },
+    {
+      "type": "concept",
+      "label": "What We Discussed",
+      "id": "What We Discussed"
+    },
+    {
+      "type": "concept",
+      "label": "IAM Clothing Brand Updates",
+      "id": "IAM Clothing Brand Updates"
+    },
+    {
+      "type": "concept",
+      "label": "Hugo's Goals (from today)",
+      "id": "Hugo's Goals (from today)"
+    },
+    {
+      "type": "concept",
+      "label": "Ideas Spawned",
+      "id": "Ideas Spawned"
+    },
+    {
+      "type": "file",
+      "label": "DRAGONCLAW Long-Term Memory",
+      "id": "MEMORY.md"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83e\udde0 Core Identity",
+      "id": "\ud83e\udde0 Core Identity"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\udcbc Active Projects",
+      "id": "\ud83d\udcbc Active Projects"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\udd11 Key Decisions",
+      "id": "\ud83d\udd11 Key Decisions"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\udc64 Hugo's Context",
+      "id": "\ud83d\udc64 Hugo's Context"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\uddc2\ufe0f Memory System",
+      "id": "\ud83d\uddc2\ufe0f Memory System"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\udccb Current Goals",
+      "id": "\ud83d\udccb Current Goals"
+    },
+    {
+      "type": "concept",
+      "label": "\ud83d\udea8 Critical Rules",
+      "id": "\ud83d\udea8 Critical Rules"
+    }
+  ],
+  "edges": [
+    {
+      "source": "README.md",
+      "target": "What Is This?"
+    },
+    {
+      "source": "README.md",
+      "target": "Folder Structure"
+    },
+    {
+      "source": "README.md",
+      "target": "How It Works"
+    },
+    {
+      "source": "README.md",
+      "target": "Why?"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "What Is It?"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "Brand Identity"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "Pages"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "Products"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "Architecture"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "Admin Credentials"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "Workflow"
+    },
+    {
+      "source": "SPEC.md",
+      "target": "TODO"
+    },
+    {
+      "source": "2026-04-25.md",
+      "target": "\ud83d\udc09 Dragonclaw Vault \u2014 Created Today!"
+    },
+    {
+      "source": "2026-04-25.md",
+      "target": "What We Discussed"
+    },
+    {
+      "source": "2026-04-25.md",
+      "target": "IAM Clothing Brand Updates"
+    },
+    {
+      "source": "2026-04-25.md",
+      "target": "Hugo's Goals (from today)"
+    },
+    {
+      "source": "2026-04-25.md",
+      "target": "Ideas Spawned"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83e\udde0 Core Identity"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83d\udcbc Active Projects"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83d\udd11 Key Decisions"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83d\udc64 Hugo's Context"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83d\uddc2\ufe0f Memory System"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83d\udccb Current Goals"
+    },
+    {
+      "source": "MEMORY.md",
+      "target": "\ud83d\udea8 Critical Rules"
+    }
+  ]
+}
