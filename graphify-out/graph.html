@@ -3,9 +3,11 @@
 <head>
   <title>🐉 DRAGONCLAW Brain</title>
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; background: #0A0A0A; font-family: 'Inter', sans-serif; overflow: hidden; }
+    
     #header {
       position: fixed;
       top: 0;
@@ -16,26 +18,38 @@
       backdrop-filter: blur(20px);
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 0 24px;
       z-index: 1000;
       border-bottom: 1px solid rgba(245,240,232,0.05);
     }
     #header h1 {
-      font-family: 'Inter', sans-serif;
       font-size: 16px;
       font-weight: 600;
       color: #F5F0E8;
       letter-spacing: 2px;
     }
-    #header h1 span { color: #6B1C2A; }
+    #header h1 span { color: #C41E3A; }
+    .status-badge {
+      font-size: 10px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(76,175,80,0.15);
+      color: #4CAF50;
+      border: 1px solid rgba(76,175,80,0.3);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
     #mynetwork { width: 100%; height: 100%; }
+    
     #sidebar {
       position: fixed;
       top: 60px;
       right: 0;
       bottom: 0;
-      width: 350px;
-      background: rgba(20,20,20,0.98);
+      width: 380px;
+      background: rgba(15,15,15,0.98);
       border-left: 1px solid rgba(245,240,232,0.05);
       padding: 24px;
       overflow-y: auto;
@@ -43,178 +57,360 @@
       z-index: 999;
     }
     #sidebar.show { display: block; }
-    #sidebar h2 { font-size: 14px; font-weight: 600; color: #6B1C2A; letter-spacing: 2px; margin-bottom: 16px; }
-    #sidebar pre { font-size: 12px; color: #F5F0E8; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+    #nodeCategory {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+    #nodeTitle { font-size: 18px; font-weight: 600; color: #F5F0E8; }
+    #nodeContent { font-size: 13px; color: rgba(245,240,232,0.7); line-height: 1.7; }
     #close-btn {
-      position: absolute;
-      top: 16px;
-      right: 16px;
       background: none;
       border: none;
-      color: #F5F0E8;
+      color: rgba(245,240,232,0.4);
       font-size: 20px;
       cursor: pointer;
-      opacity: 0.5;
+      padding: 4px;
     }
-    #close-btn:hover { opacity: 1; }
-    #instructions {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      background: rgba(20,20,20,0.9);
-      padding: 16px 20px;
-      border-radius: 8px;
-      border: 1px solid rgba(245,240,232,0.1);
-      font-size: 11px;
-      color: rgba(245,240,232,0.6);
-      line-height: 1.8;
-    }
-    #instructions strong { color: #F5F0E8; }
+    #close-btn:hover { color: #F5F0E8; }
+    
     .legend {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: rgba(20,20,20,0.9);
-      padding: 16px 20px;
-      border-radius: 8px;
-      border: 1px solid rgba(245,240,232,0.1);
+      background: rgba(15,15,15,0.95);
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(245,240,232,0.08);
       font-size: 11px;
-      color: rgba(245,240,232,0.6);
+      z-index: 100;
     }
-    .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
-    .legend-dot.file { background: #F5F0E8; }
-    .legend-dot.concept { background: #6B1C2A; }
-    .legend-dot.ref { background: #3a3a3a; }
+    .legend-title { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(245,240,232,0.4); margin-bottom: 14px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .legend-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+    .legend-dot.projects { background: #C41E3A; color: #C41E3A; }
+    .legend-dot.people { background: #F5A623; color: #F5A623; }
+    .legend-dot.ideas { background: #9C27B0; color: #9C27B0; }
+    .legend-dot.decisions { background: #2196F3; color: #2196F3; }
+    .legend-dot.identity { background: #FF5722; color: #FF5722; }
+    .legend-dot.files { background: #F5F0E8; color: #F5F0E8; }
+    .legend-dot.daily { background: #4CAF50; color: #4CAF50; }
+    .legend-dot.concepts { background: #00BCD4; color: #00BCD4; }
+    
+    .instructions {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      background: rgba(15,15,15,0.95);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(245,240,232,0.08);
+      font-size: 11px;
+      color: rgba(245,240,232,0.5);
+      line-height: 2;
+    }
+    .instructions strong { color: rgba(245,240,232,0.8); }
+    
+    #addMemory {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      background: #C41E3A;
+      color: #F5F0E8;
+      border: none;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(196,30,58,0.4);
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    #addMemory:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 6px 28px rgba(196,30,58,0.5); }
   </style>
 </head>
 <body>
 
 <div id="header">
-  <h1>🐉 <span>DRAGONCLAW</span> KNOWLEDGE BRAIN</h1>
+  <h1>🐉 <span>DRAGONCLAW</span> BRAIN</h1>
+  <div class="status-badge">● Growing</div>
 </div>
 
 <div id="mynetwork"></div>
 
 <div id="sidebar">
-  <button id="close-btn" onclick="closeSidebar()">×</button>
-  <h2 id="nodeTitle">Node</h2>
+  <div class="sidebar-header">
+    <div>
+      <div id="nodeCategory">Category</div>
+      <h2 id="nodeTitle">Node</h2>
+    </div>
+    <button id="close-btn" onclick="closeSidebar()">×</button>
+  </div>
   <pre id="nodeContent">Click a node to see details</pre>
 </div>
 
-<div id="instructions">
+<div class="instructions">
   <strong>Click</strong> node to view content<br>
   <strong>Drag</strong> to move nodes<br>
   <strong>Scroll</strong> to zoom<br>
-  <strong>Double-click</strong> empty space to reset
+  <strong>Double-click</strong> empty to reset
 </div>
 
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot file"></div> File / Document</div>
-  <div class="legend-item"><div class="legend-dot concept"></div> Concept / Topic</div>
-  <div class="legend-item"><div class="legend-dot ref"></div> Connection</div>
+  <div class="legend-title">Memory Types</div>
+  <div class="legend-item"><div class="legend-dot projects"></div> Projects</div>
+  <div class="legend-item"><div class="legend-dot people"></div> People</div>
+  <div class="legend-item"><div class="legend-dot ideas"></div> Ideas</div>
+  <div class="legend-item"><div class="legend-dot decisions"></div> Decisions</div>
+  <div class="legend-item"><div class="legend-dot identity"></div> Identity</div>
+  <div class="legend-item"><div class="legend-dot files"></div> Files</div>
+  <div class="legend-item"><div class="legend-dot daily"></div> Daily Logs</div>
+  <div class="legend-item"><div class="legend-dot concepts"></div> Concepts</div>
 </div>
 
 <script>
-const nodes = new vis.DataSet([
-  { id: 1, label: 'IAM Brand', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 2, label: 'DRAGONCLAW', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 3, label: 'Memory System', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 4, label: '2026-04-25', group: 'file', color: { background: '#F5F0E8', border: '#6B1C2A' } },
-  { id: 5, label: 'MEMORY.md', group: 'file', color: { background: '#F5F0E8', border: '#6B1C2A' } },
-  { id: 6, label: 'Identity', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 7, label: 'Projects', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 8, label: 'Hugo Ferrari', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 9, label: 'Shop System', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 10, label: 'Admin Portal', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 11, label: 'Client Portal', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 12, label: 'API Server', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 13, label: 'specOPS', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 14, label: 'Supabase', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 15, label: 'Boca Raton', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-  { id: 16, label: 'GitHub', group: 'concept', color: { background: '#6B1C2A', border: '#F5F0E8' } },
-]);
+// ========== COLOR SCHEME ==========
+const COLORS = {
+  projects:   { bg: '#C41E3A', border: '#FF6B6B', glow: 'rgba(196,30,58,0.5)' },
+  people:     { bg: '#F5A623', border: '#FFD54F', glow: 'rgba(245,166,35,0.4)' },
+  ideas:      { bg: '#9C27B0', border: '#CE93D8', glow: 'rgba(156,39,176,0.4)' },
+  decisions:  { bg: '#2196F3', border: '#64B5F6', glow: 'rgba(33,150,243,0.4)' },
+  identity:   { bg: '#FF5722', border: '#FF8A65', glow: 'rgba(255,87,34,0.4)' },
+  files:      { bg: '#F5F0E8', border: '#FFFFFF', glow: 'rgba(245,240,232,0.3)' },
+  daily:      { bg: '#4CAF50', border: '#81C784', glow: 'rgba(76,175,80,0.4)' },
+  concepts:   { bg: '#00BCD4', border: '#4DD0E1', glow: 'rgba(0,188,212,0.4)' },
+};
 
-const edges = new vis.DataSet([
-  { from: 1, to: 2, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 1, to: 9, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 1, to: 10, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 1, to: 11, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 2, to: 3, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 2, to: 6, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 2, to: 8, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 3, to: 4, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 3, to: 5, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 4, to: 7, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 5, to: 6, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 5, to: 7, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 6, to: 8, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 7, to: 1, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 7, to: 13, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 8, to: 15, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 9, to: 12, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 9, to: 14, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 10, to: 12, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 11, to: 14, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 13, to: 14, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 12, to: 16, color: { color: 'rgba(245,240,232,0.2)' } },
-  { from: 16, to: 1, color: { color: 'rgba(245,240,232,0.2)' } },
-]);
+// ========== NODES ==========
+const nodesData = [
+  // Identity (Orange)
+  { id: 1, label: 'DRAGONCLAW', group: 'identity', color: COLORS.identity },
+  { id: 2, label: 'Hugo Ferrari', group: 'people', color: COLORS.people },
+  { id: 3, label: 'Identity', group: 'concepts', color: COLORS.concepts },
+  { id: 4, label: 'AI Co-Founder', group: 'concepts', color: COLORS.concepts },
+  { id: 5, label: '24/7 ON TELEGRAM', group: 'concepts', color: COLORS.concepts },
+  
+  // Projects (Red)
+  { id: 10, label: 'IAM BRAND', group: 'projects', color: COLORS.projects },
+  { id: 11, label: 'Shop System', group: 'projects', color: COLORS.projects },
+  { id: 12, label: 'Admin Portal', group: 'projects', color: COLORS.projects },
+  { id: 13, label: 'Client Portal', group: 'projects', color: COLORS.projects },
+  { id: 14, label: 'API Server', group: 'projects', color: COLORS.projects },
+  
+  { id: 20, label: 'specOPS', group: 'projects', color: COLORS.projects },
+  { id: 21, label: 'Supabase', group: 'concepts', color: COLORS.concepts },
+  { id: 22, label: 'Fitness AI', group: 'concepts', color: COLORS.concepts },
+  
+  // People (Orange/Yellow)
+  { id: 30, label: 'Boca Raton', group: 'people', color: COLORS.people },
+  { id: 31, label: 'Developer', group: 'concepts', color: COLORS.concepts },
+  
+  // Ideas (Purple)
+  { id: 40, label: 'Brain Vault', group: 'ideas', color: COLORS.ideas },
+  { id: 41, label: 'Color-Coded Memory', group: 'ideas', color: COLORS.ideas },
+  { id: 42, label: 'Autonomous Thinking', group: 'ideas', color: COLORS.ideas },
+  
+  // Decisions (Blue)
+  { id: 50, label: 'Varsity Logo', group: 'decisions', color: COLORS.decisions },
+  { id: 51, label: 'Local Brain', group: 'decisions', color: COLORS.decisions },
+  { id: 52, label: 'Server Memory', group: 'decisions', color: COLORS.decisions },
+  
+  // Files (White/Cream)
+  { id: 60, label: 'MEMORY.md', group: 'files', color: COLORS.files },
+  { id: 61, label: '2026-04-25', group: 'daily', color: COLORS.daily },
+  { id: 62, label: 'IDENTITY.md', group: 'files', color: COLORS.files },
+  { id: 63, label: 'SPEC.md', group: 'files', color: COLORS.files },
+  
+  // Technical (Cyan)
+  { id: 70, label: 'GitHub', group: 'concepts', color: COLORS.concepts },
+  { id: 71, label: 'Graphify', group: 'concepts', color: COLORS.concepts },
+  { id: 72, label: 'Knowledge Graph', group: 'concepts', color: COLORS.concepts },
+];
+
+// ========== EDGES ==========
+const edgesData = [
+  // DRAGONCLAW core connections
+  { from: 1, to: 3, color: 'rgba(255,87,34,0.3)' },
+  { from: 1, to: 4, color: 'rgba(255,87,34,0.3)' },
+  { from: 1, to: 40, color: 'rgba(255,87,34,0.2)' },
+  { from: 1, to: 60, color: 'rgba(255,87,34,0.2)' },
+  { from: 1, to: 61, color: 'rgba(255,87,34,0.2)' },
+  
+  // Hugo connections
+  { from: 2, to: 30, color: 'rgba(245,166,35,0.3)' },
+  { from: 2, to: 31, color: 'rgba(245,166,35,0.3)' },
+  { from: 2, to: 1, color: 'rgba(245,166,35,0.3)' },
+  
+  // IAM project connections
+  { from: 10, to: 11, color: 'rgba(196,30,58,0.3)' },
+  { from: 10, to: 12, color: 'rgba(196,30,58,0.3)' },
+  { from: 10, to: 13, color: 'rgba(196,30,58,0.3)' },
+  { from: 10, to: 50, color: 'rgba(196,30,58,0.2)' },
+  { from: 10, to: 70, color: 'rgba(196,30,58,0.2)' },
+  { from: 11, to: 14, color: 'rgba(196,30,58,0.3)' },
+  { from: 12, to: 14, color: 'rgba(196,30,58,0.3)' },
+  { from: 13, to: 21, color: 'rgba(196,30,58,0.2)' },
+  
+  // specOPS connections
+  { from: 20, to: 21, color: 'rgba(196,30,58,0.3)' },
+  { from: 20, to: 22, color: 'rgba(196,30,58,0.3)' },
+  
+  // Ideas connections
+  { from: 40, to: 41, color: 'rgba(156,39,176,0.3)' },
+  { from: 40, to: 72, color: 'rgba(156,39,176,0.3)' },
+  { from: 41, to: 42, color: 'rgba(156,39,176,0.3)' },
+  
+  // Decisions connections
+  { from: 50, to: 10, color: 'rgba(33,150,243,0.3)' },
+  { from: 51, to: 40, color: 'rgba(33,150,243,0.3)' },
+  { from: 52, to: 1, color: 'rgba(33,150,243,0.3)' },
+  { from: 52, to: 40, color: 'rgba(33,150,243,0.2)' },
+  
+  // File connections
+  { from: 60, to: 61, color: 'rgba(245,240,232,0.2)' },
+  { from: 60, to: 3, color: 'rgba(245,240,232,0.15)' },
+  { from: 62, to: 1, color: 'rgba(245,240,232,0.2)' },
+  { from: 63, to: 10, color: 'rgba(245,240,232,0.2)' },
+  
+  // Technical connections
+  { from: 70, to: 10, color: 'rgba(0,188,212,0.2)' },
+  { from: 70, to: 20, color: 'rgba(0,188,212,0.2)' },
+  { from: 71, to: 72, color: 'rgba(0,188,212,0.3)' },
+  { from: 72, to: 40, color: 'rgba(0,188,212,0.2)' },
+];
+
+// Build nodes with vis.js formatting
+const nodes = new vis.DataSet(nodesData.map(n => ({
+  id: n.id,
+  label: n.label,
+  group: n.group,
+  color: {
+    background: n.color.bg,
+    border: n.color.border,
+    highlight: { background: n.color.bg, border: n.color.border },
+    hover: { background: n.color.bg, border: n.color.border }
+  },
+  font: { color: n.group === 'files' ? '#0A0A0A' : '#F5F0E8', size: 13, face: 'Inter', strokeWidth: 0 }
+})));
+
+// Build edges
+const edges = new vis.DataSet(edgesData.map(e => ({
+  from: e.from,
+  to: e.to,
+  color: { color: e.color, opacity: 0.6 },
+  width: 1.5,
+  smooth: { type: 'continuous' }
+})));
 
 const container = document.getElementById('mynetwork');
 const data = { nodes: nodes, edges: edges };
 const options = {
   nodes: {
     shape: 'dot',
-    size: 20,
-    font: { color: '#F5F0E8', size: 14, face: 'Inter' },
+    size: 22,
     borderWidth: 2,
-    shadow: { enabled: true, color: 'rgba(0,0,0,0.5)', size: 10 }
+    shadow: { enabled: true, size: 15, color: 'rgba(0,0,0,0.5)' }
   },
   edges: {
     width: 1.5,
-    color: { color: 'rgba(245,240,232,0.2)' },
-    smooth: { type: 'continuous' }
+    smooth: { type: 'continuous' },
+    hoverOpacity: 0.8
   },
   physics: {
     enabled: true,
-    barnesHut: { gravitationalConstant: -3000, springConstant: 0.04, damping: 0.09 }
+    barnesHut: { gravitationalConstant: -4000, springConstant: 0.04, damping: 0.08, avoidOverlap: 0.5 }
   },
   interaction: {
     hover: true,
     tooltipDelay: 100,
     zoomView: true,
     dragView: true
+  },
+  groups: {
+    projects: { color: COLORS.projects },
+    people: { color: COLORS.people },
+    ideas: { color: COLORS.ideas },
+    decisions: { color: COLORS.decisions },
+    identity: { color: COLORS.identity },
+    files: { color: COLORS.files },
+    daily: { color: COLORS.daily },
+    concepts: { color: COLORS.concepts }
   }
 };
 
 const network = new vis.Network(container, data, options);
 
-// Click node to show content
+// Node content database
 const nodeContent = {
-  1: 'Christian streetwear brand. Varsity block logo, maroon + cream. Faith In Every Thread.',
-  2: 'DRAGONCLAW - Hugo\'s AI co-founder. Running 24/7 on Telegram. Identity stored in system/IDENTITY.md',
-  3: 'Permanent memory vault at ~/dragonclaw_bot/. Every session logged. Obsidian/Graphify ready.',
-  4: 'Today\'s session: Created memory vault. Discussed IAM backend. Hugo wants permanent brain.',
-  5: 'Long-term memory. Curated summary of all projects, decisions, people, and goals.',
-  6: 'DRAGONCLAW Identity: Name, owner, personality, stack, skills, critical rules.',
-  7: 'IAM (clothing), specOPS (fitness app). Each project has SPEC.md in projects/.',
-  8: 'Hugo Ferrari - Software dev, Boca Raton FL. React Native, Expo, Supabase, Stripe. Direct, knows what he wants.',
-  9: 'shop.html - Product catalog, cart, checkout. Client-side only without backend.',
-  10: 'admin.html - Admin scan & ship. Tracks orders. Sends email notifications.',
-  11: 'client-portal.html - Clients track orders by email. See status + tracking ID.',
-  12: 'Express API at ~/IAM/api/server.js. Runs on port 3001. Needs 24/7 deployment.',
-  13: 'Fitness AI app with Supabase. 16 screens built. Stack: RN + Expo + Supabase.',
-  14: 'Database backend for IAM and specOPS. Schema ready at supabase/schema.sql.',
-  15: 'Hugo\'s location. EST timezone. Server is local at 192.168.0.207.',
-  16: 'All repos on xxdjhugoxx account. GitHub Pages enabled for IAM and dragonclaw_bot.'
+  1: 'DRAGONCLAW — Hugo\'s personal AI co-founder. Running 24/7 on Telegram. Direct, sharp, bold. No fluff. Just results.',
+  2: 'Hugo Ferrari — Software developer and app builder. Boca Raton, FL. React Native, Expo, Supabase, Stripe. Knows what he wants.',
+  3: 'Identity stored in system/IDENTITY.md. Core personality, stack, skills, critical rules.',
+  4: 'AI Co-Founder role — Not just an assistant. Senior dev + product designer + business strategist.',
+  5: 'Always on. 24/7. Via Telegram. Primary communication with Hugo.',
+  10: 'IAM — Christian streetwear brand. Varsity block logo, maroon + cream. Faith In Every Thread.',
+  11: 'shop.html — Product catalog + cart + checkout. Client-side localStorage, needs backend for production.',
+  12: 'admin.html — Scan & ship fulfillment. Admin: admin@iam.com / admin123',
+  13: 'client-portal.html — Clients track orders by email. See status + tracking.',
+  14: 'Express API at ~/IAM/api/server.js. Runs on port 3001. Needs 24/7 deployment.',
+  20: 'specOPS — Fitness AI app. 16 screens built. Supabase connected. Stack: RN + Expo.',
+  21: 'Supabase database — jbumilopcidspfujphiq.supabase.co. Schema ready.',
+  22: 'Fitness AI with workout tracking, nutrition, coaching features.',
+  30: 'Boca Raton, Florida — Hugo\'s location. EST timezone.',
+  31: 'Software developer and app builder — Full stack: React Native, Expo, Node.js, TypeScript, Supabase, Stripe.',
+  40: 'Permanent memory vault at ~/dragonclaw_bot/. Brain lives on server.',
+  41: 'Color-coded memory system. Different colors = different memory types. Visual brain mapping.',
+  42: 'Autonomous thinking — Brain grows without being asked. Ideas generated during heartbeats.',
+  50: 'Decision: Varsity block style for IAM logo. Matches reference photo. Hugo approved.',
+  51: 'Decision: Local brain accessible from same network only. Server-based memory.',
+  52: 'Decision: Brain lives on server at 192.168.0.207:3456. Not on GitHub. Private.',
+  60: 'Long-term curated memory. Projects, decisions, people, goals. Updated after each session.',
+  61: 'Today\'s session log. Created vault, brain visualization, memory system. Hugo wanted local brain.',
+  62: 'DRAGONCLAW identity file. Name, owner, personality, stack, skills, rules.',
+  63: 'IAM project specification. Brand identity, pages, products, workflow, TODO.',
+  70: 'GitHub: xxdjhugoxx. All repos here. Backup storage.',
+  71: 'Graphify — Knowledge graph visualization. Builds interactive brain from markdown files.',
+  72: 'Knowledge graph — Visual representation of memory. Nodes = concepts/files. Edges = relationships.',
+};
+
+const categoryColors = {
+  projects:  { bg: '#C41E3A', text: '#FF6B6B' },
+  people:    { bg: '#F5A623', text: '#FFD54F' },
+  ideas:     { bg: '#9C27B0', text: '#CE93D8' },
+  decisions: { bg: '#2196F3', text: '#64B5F6' },
+  identity:  { bg: '#FF5722', text: '#FF8A65' },
+  files:     { bg: '#F5F0E8', text: '#0A0A0A' },
+  daily:     { bg: '#4CAF50', text: '#81C784' },
+  concepts:  { bg: '#00BCD4', text: '#4DD0E1' },
 };
 
 network.on('click', function (params) {
   if (params.nodes.length > 0) {
     const nodeId = params.nodes[0];
-    document.getElementById('nodeTitle').textContent = nodes.get(nodeId).label;
-    document.getElementById('nodeContent').textContent = nodeContent[nodeId] || 'No additional info.';
+    const node = nodesData.find(n => n.id === nodeId);
+    const cat = categoryColors[node.group] || categoryColors.concepts;
+    
+    document.getElementById('nodeCategory').textContent = node.group.toUpperCase();
+    document.getElementById('nodeCategory').style.background = cat.bg + '22';
+    document.getElementById('nodeCategory').style.color = cat.text;
+    document.getElementById('nodeCategory').style.border = '1px solid ' + cat.bg;
+    
+    document.getElementById('nodeTitle').textContent = node.label;
+    document.getElementById('nodeContent').textContent = nodeContent[nodeId] || 'No additional information stored.';
     document.getElementById('sidebar').classList.add('show');
   } else {
     document.getElementById('sidebar').classList.remove('show');

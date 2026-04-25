@@ -100,9 +100,10 @@ Permanent storage: `/home/hugo/dragonclaw_bot/`
 
 ## 🚨 Critical Rules
 
-1. **Push everything to GitHub immediately** — Hugo can't access this server
-2. **Server IP:** 192.168.0.207 (local network only)
-3. **GitHub repos live on xxdjhugoxx account**
+1. **Brain lives on server** — Local only, same network access
+2. **Server IP:** 192.168.0.207:3456 (Dragon Brain)
+3. **Vault:** `/home/hugo/dragonclaw_bot/`
+4. **GitHub is backup** — Not primary access anymore
 
 ---
 
